@@ -1,0 +1,146 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                          LaTeX report template                              %
+%              © 2010 Valentin Roussellet (louen_AD_palouf.org)               %
+%    Distributed under the terms of WTFPL v2, see http://sam.zoy.org/wtfpl    %
+%                 Version 2 for modern LaTeX, 13 of May 2023                  %
+%                       Compile with XeLaTeX or LuaLaTeX                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, 10pt]{article}
+
+% ============================== PREAMBLE =====================================
+% Language---------------------------------------------------------------------
+\usepackage[english]{babel}
+
+% Margins----------------------------------------------------------------------
+\usepackage{geometry}
+\geometry{hmargin=4.0cm, vmargin=2.0cm }
+
+% Useful packages--------------------------------------------------------------
+\usepackage{graphicx}                           % including  images
+\usepackage{xcolor}                             % color texts
+\usepackage{subcaption}                         % caption subfigures
+\usepackage[tight]{shorttoc}                    % for a short summary
+\usepackage[colorlinks=true,
+            linkcolor=blue,
+            citecolor=blue,
+            urlcolor=blue,
+            bookmarksopen=false]{hyperref}      % pdf links in the document
+%\usepackage{listings}                          % for source code inclusion
+
+%\usepackage{fontspec}
+
+% Mathematical symbols---------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsfonts}               % math fonts (mathbb, mathcal, etc.)
+\usepackage{mathrsfs}               % support for both mathsrc and mathcal
+\usepackage{amsthm}                 % theorem environment
+\usepackage{mathtools}              % shortintertext
+
+\usepackage{unicode-math} % Must be loaded after ams packages
+
+\usepackage[backend=biber,      % use biber as our bib tool
+            style=alphabetic,   % similar to alpha with short keys [XYX+12]
+            maxcitenames=2,     % Cite at most two authors before "et al."
+            maxbibnames=99,     % Full names in bibliography
+            refsection=section, % only show the bibliography of the section
+            doi=false, isbn=false, % do not show DOI or ISBN
+            natbib=true]{biblatex} % Let us have citet and citep from natbib
+\renewcommand\mkbibnamefamily[1]{\textsc{#1}} % Use small caps for names
+\AtBeginBibliography{\small} % Smaller text for bibliography
+
+% \addbibresource{xxx.bib}
+
+\usepackage{lscape}
+\usepackage{csquotes}
+\usepackage{cleveref}
+\usepackage{textcomp}
+\usepackage{gensymb}
+
+
+% Typesetting ----------
+
+\allowdisplaybreaks                 % allow equations page break
+\linespread{1.0}                    % Line spacing
+
+% Main font is Tex Gyre Pagella / Fira Sans / Fira Code
+\defaultfontfeatures{Scale=MatchLowercase}
+\setmainfont[Ligatures=TeX]{Tex Gyre Pagella}
+\setsansfont[Ligatures = TeX,
+             FontFace = {sb}{n}{Fira Sans SemiBold},
+             FontFace = {sb}{i}{Fira Sans SemiBold Italic}
+]{Fira Sans}
+\setmonofont[FakeStretch=0.9]{Fira Code}
+
+% Select math fonts to match
+\setmathfont[Ligatures=TeX]{TeX Gyre Pagella Math}
+
+% Enable semi-bold
+\DeclareOldFontCommand{\sbseries}{\fontseries{sb}\selectfont}{\mathbf}
+\DeclareTextFontCommand{\textsb}{\sbseries}
+
+% Use XITS maths for different mathcal and mathscr symbols
+\setmathfont[range={\mathcal,\mathbfcal},StylisticSet=1]{XITS Math}
+\setmathfont[range=\mathscr]{XITS Math}
+
+
+\numberwithin{equation}{section} % number equations per section
+
+% Math and other comnmands
+\input{commands}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+% ============================== FRONT MATTER =================================
+
+\title{Dice and divisors}
+\author{Valentin \textsc{Roussellet}}
+\date{\today}
+
+\begin{document}
+\maketitle
+What are the odds on rolling two 100-sided dice and getting numbers that share exactly two divisors?
+
+More generally, let $N \geq 1$ be the dice number and $k > 0$ the number of shared factors:
+How many pairs $P(N,k)$ of integers $ 1 \leq n \leq N$ share exactly $k$ factors?
+
+
+For this problem, a number's factors include 1 and itself, so the factors of 6 are 1,2,3,4 and 6.
+\newtheorem{lemma}{Lemma}
+\begin{lemma}
+    Two integers $x$ and $y \in \mathbb{N}$ share exactly $k$ factors if and only if their GCD
+    had exactly $k$ factors.
+    \label{thm:div}
+\end{lemma}
+
+\section*{Case $k = 1$}
+Numbers $x$ and $y$ share exactly one factor, then their GCD has only one factor, which means $\gcd(x,y) =1$: in other words $x$ and $y$ are coprime.
+
+Using $\phi$, Euler's totient function, where $\phi(n)$ counts coprimes less than or equal to $n$,
+\[
+    P(N,1) = 2 \left( \sum_{i=1}^N \phi(i)  \right)- 1
+\]
+\begin{proof}
+    We prove this formula by induction.
+
+    Firstly, we check that $P(1,1) = 1$, that is the formula is true for $N = 1$, as there is exactly one pair of coprime numbers: $(1,1)$ and
+    $\phi(1) = 1$
+
+    Next, assume the formula holds for $N \geq 1$.
+    For $N+1$ there are the $P(N,1)$ pairs of coprime numbers between 1 and $N$, to which
+    we must add the coprime pairs of the form $(x,N+1)$ and $(N+1,y)$.
+    There are exactly $\phi(N+1)$ pairs of the first form and $\phi(N+1)$ of the second form,
+    thus
+    \[ P(N+1,1) = P(N,1) + 2 \phi(N+1) \]
+    Note that we don't count twice the pair $(N+1, N+1)$ since $N+1$ cannot be coprime with itself as $N+1 > 1$.
+    Therefore
+    \[
+        P(N+1,1) = 2 \left( \sum_{i=1}^{N+1} \phi(i)  \right) - 1
+    \]
+
+\end{proof}
+
+
+\end{document}
+
